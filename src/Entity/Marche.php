@@ -59,6 +59,15 @@ class Marche
     private ?Categorie $categorie = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\Length(
+        min: 3,
+        max: 255,
+        minMessage: 'Le nom du marché doit faire au moins {{ limit }} caractères.',
+        maxMessage: 'Le nom du marché doit faire moins de {{ limit }} caractères.'
+    )]
+    #[Assert\NotBlank(
+        message: 'Le nom du marché ne peut pas être vide'
+    )]
     private ?string $nom = null;
 
     public function __construct()

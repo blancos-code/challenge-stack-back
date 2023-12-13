@@ -10,12 +10,14 @@ use App\Entity\User;
 use DateTimeImmutable;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
+use Faker\Factory;
+use Faker\Generator;
 
 class AppFixtures extends Fixture
 {
     public function load(ObjectManager $manager): void
     {
-        $faker = \Faker\Factory::create('fr_FR');
+        $faker = Factory::create('fr_FR');
 
         $this->createUsers($faker, $manager);
         $manager->flush();
@@ -32,7 +34,7 @@ class AppFixtures extends Fixture
         $this->createProducteurs($faker, $manager);
         $manager->flush();
     }
-    public function createUsers(\Faker\Generator $faker, ObjectManager $manager): void
+    public function createUsers(Generator $faker, ObjectManager $manager): void
     {
         for ($i = 0; $i < 10; $i++) {
             $user = new User();
@@ -46,11 +48,11 @@ class AppFixtures extends Fixture
     }
 
     /**
-     * @param \Faker\Generator $faker
+     * @param Generator $faker
      * @param ObjectManager $manager
      * @return void
      */
-    public function createCategories(\Faker\Generator $faker, ObjectManager $manager): void
+    public function createCategories(Generator $faker, ObjectManager $manager): void
     {
         for ($i = 0; $i < 10; $i++) {
             $categorie = new Categorie();
@@ -60,11 +62,11 @@ class AppFixtures extends Fixture
     }
 
     /**
-     * @param \Faker\Generator $faker
+     * @param Generator $faker
      * @param ObjectManager $manager
      * @return void
      */
-    public function createMarches(\Faker\Generator $faker, ObjectManager $manager): void
+    public function createMarches(Generator $faker, ObjectManager $manager): void
     {
         for ($i = 0; $i < 10; $i++) {
             $marche = new Marche();
@@ -73,16 +75,17 @@ class AppFixtures extends Fixture
             $marche->setDateDebut(new DateTimeImmutable($faker->dateTime->format('Y-m-d H:i:s')));
             $marche->setDateFin(new DateTimeImmutable($faker->dateTime->format('Y-m-d H:i:s')));
             $marche->setProprietaire($faker->randomElement($manager->getRepository(User::class)->findAll()));
+            $marche->setCategorie($faker->randomElement($manager->getRepository(Categorie::class)->findAll()));
             $manager->persist($marche);
         }
     }
 
     /**
-     * @param \Faker\Generator $faker
+     * @param Generator $faker
      * @param ObjectManager $manager
      * @return void
      */
-    public function createProducteurs(\Faker\Generator $faker, ObjectManager $manager): void
+    public function createProducteurs(Generator $faker, ObjectManager $manager): void
     {
         for ($i = 0; $i < 10; $i++) {
             $producteur = new Producteur();
@@ -102,10 +105,10 @@ class AppFixtures extends Fixture
     }
 
     /**
-     * @param \Faker\Generator $faker
+     * @param Generator $faker
      * @return void
      */
-    public function createProduits(\Faker\Generator $faker, ObjectManager $manager): void
+    public function createProduits(Generator $faker, ObjectManager $manager): void
     {
         for ($i = 0; $i < 10; $i++) {
             $produit = new Produit();
