@@ -5,6 +5,7 @@ namespace App\Entity;
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\ProduitRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ProduitRepository::class)]
 #[ApiResource(normalizationContext: ['groups' => ['read']], denormalizationContext: ['groups' => ['write']])]
@@ -16,9 +17,21 @@ class Produit
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\Length(
+        min: 3,
+        max: 255,
+        minMessage: 'Le nom du produit doit faire au moins {{ limit }} caractères.',
+        maxMessage: 'Le nom du produit doit faire moins de {{ limit }} caractères.'
+    )]
+    #[Assert\NotBlank(
+        message: 'Le nom du produit ne peut pas être vide'
+    )]
     private ?string $nom = null;
 
     #[ORM\ManyToOne(inversedBy: 'produits')]
+    #[Assert\NotBlank(
+        message: 'Le producteur ne peut pas être vide'
+    )]
     private ?Producteur $producteur = null;
 
     #[ORM\Column]

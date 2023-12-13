@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: MarcheRepository::class)]
 #[ApiResource(normalizationContext: ['groups' => ['read']], denormalizationContext: ['groups' => ['write']])]
@@ -19,21 +20,38 @@ class Marche
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\Length(
+        min: 3,
+        max: 255,
+        minMessage: 'L\'adresse du marché doit faire au moins {{ limit }} caractères.',
+        maxMessage: 'L\'adresse du marché doit faire moins de {{ limit }} caractères.'
+    )]
+    #[Assert\NotBlank(
+        message: 'L\'adresse du marché ne peut pas être vide'
+    )]
     private ?string $adresse = null;
 
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
+    #[Assert\NotBlank(
+        message: 'La date du marché ne peut pas être vide'
+    )]
     private ?\DateTimeImmutable $dateDebut = null;
 
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
+    #[Assert\NotBlank(
+        message: 'L\'heure du marché ne peut pas être vide'
+    )]
     private ?\DateTimeImmutable $dateFin = null;
 
-    #[ORM\ManyToMany(targetEntity: Producteur::class, inversedBy: 'marches')]
+    #[ORM\ManyToMany(targetEntity: Producteur::class, inversedBy: 'marchesProducteurs')]
+    // TODO : repasser pour vérifier si nécessaire
+    // #[ORM\JoinColumn(nullable: true, onDelete: 'CASCADE')]
     private Collection $producteurs;
 
-    #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'marches')]
+    #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'marchesInscrits')]
     private Collection $clientsInscrits;
 
-    #[ORM\ManyToOne(inversedBy: 'marches')]
+    #[ORM\ManyToOne(inversedBy: 'marchesProprietaire')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $proprietaire = null;
 
