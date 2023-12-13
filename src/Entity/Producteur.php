@@ -8,24 +8,34 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ProducteurRepository::class)]
 #[ApiResource(normalizationContext: ['groups' => ['read']], denormalizationContext: ['groups' => ['write']])]
 class Producteur extends User
 {
     #[ORM\Column(type: Types::TEXT)]
+    #[Assert\Length(
+        min: 10,
+        max: 255,
+        minMessage: 'La description du producteur doit faire au moins {{ limit }} caractères.',
+        maxMessage: 'La description du producteur doit faire moins de {{ limit }} caractères.'
+    )]
+    #[Assert\NotBlank(
+        message: 'La description du producteur ne peut pas être vide'
+    )]
     private ?string $description = null;
 
     #[ORM\OneToMany(mappedBy: 'producteur', targetEntity: Produit::class)]
     private Collection $produits;
 
     #[ORM\ManyToMany(targetEntity: Marche::class, mappedBy: 'producteurs')]
-    private Collection $marches;
+    private Collection $marchesProducteurs;
 
     public function __construct()
     {
         $this->produits = new ArrayCollection();
-        $this->marches = new ArrayCollection();
+        $this->marchesProducteurs = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -80,13 +90,13 @@ class Producteur extends User
      */
     public function getMarches(): Collection
     {
-        return $this->marches;
+        return $this->marchesProducteurs;
     }
 
     public function addMarche(Marche $march): static
     {
-        if (!$this->marches->contains($march)) {
-            $this->marches->add($march);
+        if (!$this->marchesProducteurs->contains($march)) {
+            $this->marchesProducteurs->add($march);
             $march->addProducteur($this);
         }
 
@@ -95,7 +105,7 @@ class Producteur extends User
 
     public function removeMarch(Marche $march): static
     {
-        if ($this->marches->removeElement($march)) {
+        if ($this->marchesProducteurs->removeElement($march)) {
             $march->removeProducteur($this);
         }
 

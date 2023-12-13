@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
@@ -20,22 +21,67 @@ class User
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\Length(
+        min: 3,
+        max: 255,
+        minMessage: 'Le nom doit faire au moins {{ limit }} caractères.',
+        maxMessage: 'Le nom doit faire moins de {{ limit }} caractères.'
+    )]
+    #[Assert\NotBlank(
+        message: 'Le nom ne peut pas être vide'
+    )]
     private ?string $nom = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\Length(
+        min: 3,
+        max: 255,
+        minMessage: 'Le prénom doit faire au moins {{ limit }} caractères.',
+        maxMessage: 'Le prénom doit faire moins de {{ limit }} caractères.'
+    )]
+    #[Assert\NotBlank(
+        message: 'Le prénom ne peut pas être vide'
+    )]
     private ?string $prenom = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\Length(
+        min: 3,
+        max: 255,
+        minMessage: 'L\'email doit faire au moins {{ limit }} caractères.',
+        maxMessage: 'L\'email doit faire moins de {{ limit }} caractères.'
+    )]
+    #[Assert\NotBlank(
+        message: 'L\'email ne peut pas être vide'
+    )]
+
     private ?string $email = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\Length(
+        exact: 10,
+        exactMessage: 'Le numéro de téléphone doit faire exactement {{ limit }} chiffres.'
+    )]
+    #[Assert\Regex(
+        pattern: '/^0[0-9]{9}$/',
+        message: 'Le numéro de téléphone doit commencer par 0 suivi de 9 chiffres.'
+    )]
     private ?string $tel = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\Length(
+        min: 3,
+        max: 255,
+        minMessage: 'L\'adresse doit faire au moins {{ limit }} caractères.',
+        maxMessage: 'L\'adresse doit faire moins de {{ limit }} caractères.'
+    )]
+    #[Assert\NotBlank(
+        message: 'L\'adresse ne peut pas être vide'
+    )]
     private ?string $adresse = null;
 
     #[ORM\ManyToMany(targetEntity: Marche::class, mappedBy: 'clientsInscrits')]
-    private Collection $marcheProprietaires;
+    private Collection $marches_inscrits;
 
     #[ORM\ManyToMany(targetEntity: Marche::class)]
     private Collection $marchesFavoris;
@@ -114,15 +160,15 @@ class User
     /**
      * @return Collection<int, Marche>
      */
-    public function getMarcheProprietaires(): Collection
+    public function getMarcheInscrits(): Collection
     {
-        return $this->marcheProprietaires;
+        return $this->marches_inscrits;
     }
 
     public function addMarche(Marche $march): static
     {
-        if (!$this->marcheProprietaires->contains($march)) {
-            $this->marcheProprietaires->add($march);
+        if (!$this->marches_inscrits->contains($march)) {
+            $this->marches_inscrits->add($march);
             $march->addClientsInscrit($this);
         }
 
@@ -131,7 +177,7 @@ class User
 
     public function removeMarch(Marche $march): static
     {
-        if ($this->marcheProprietaires->removeElement($march)) {
+        if ($this->marches_inscrits->removeElement($march)) {
             $march->removeClientsInscrit($this);
         }
 
