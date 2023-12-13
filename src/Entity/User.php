@@ -2,16 +2,15 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Metadata\ApiResource;
-use App\Repository\UserRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use ORM\DiscriminatorColumn;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Serializer\Annotation\Groups;
+use App\Repository\UserRepository;
+use ApiPlatform\Metadata\ApiResource;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-#[ORM\Table(name: '`user`')]
 #[ApiResource(normalizationContext: ['groups' => ['read']], denormalizationContext: ['groups' => ['write']])]
 class User
 {
@@ -81,15 +80,19 @@ class User
     private ?string $adresse = null;
 
     #[ORM\ManyToMany(targetEntity: Marche::class, mappedBy: 'clientsInscrits')]
-    private Collection $marches_inscrits;
+    private Collection $marchesInscrits;
 
     #[ORM\ManyToMany(targetEntity: Marche::class)]
     private Collection $marchesFavoris;
 
+    #[ORM\OneToMany(targetEntity: Marche::class, mappedBy: 'proprietaire')]
+    private Collection $marchesProprietaire;
+
     public function __construct()
     {
-        $this->marcheProprietaires = new ArrayCollection();
+        $this->marchesInscrits = new ArrayCollection();
         $this->marchesFavoris = new ArrayCollection();
+        $this->marchesProprietaire = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -162,22 +165,22 @@ class User
      */
     public function getMarcheInscrits(): Collection
     {
-        return $this->marches_inscrits;
+        return $this->marchesInscrits;
     }
 
     public function addMarche(Marche $march): static
     {
-        if (!$this->marches_inscrits->contains($march)) {
-            $this->marches_inscrits->add($march);
+        if (!$this->marchesInscrits->contains($march)) {
+            $this->marchesInscrits->add($march);
             $march->addClientsInscrit($this);
         }
 
         return $this;
     }
 
-    public function removeMarch(Marche $march): static
+    public function removeMarche(Marche $march): static
     {
-        if ($this->marches_inscrits->removeElement($march)) {
+        if ($this->marchesInscrits->removeElement($march)) {
             $march->removeClientsInscrit($this);
         }
 
@@ -204,6 +207,30 @@ class User
     public function removeMarchesFavori(Marche $marchesFavori): static
     {
         $this->marchesFavoris->removeElement($marchesFavori);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Marche>
+     */
+    public function getMarchesProprietaire(): Collection
+    {
+        return $this->marchesProprietaire;
+    }
+
+    public function addMarchesProprietaire(Marche $marchesProprietaire): static
+    {
+        if (!$this->marchesProprietaire->contains($marchesProprietaire)) {
+            $this->marchesProprietaire->add($marchesProprietaire);
+        }
+
+        return $this;
+    }
+
+    public function removeMarchesProprietaire(Marche $marchesProprietaire): static
+    {
+        $this->marchesProprietaire->removeElement($marchesProprietaire);
 
         return $this;
     }

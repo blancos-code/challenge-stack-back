@@ -34,13 +34,9 @@ class Producteur extends User
 
     public function __construct()
     {
+        parent::__construct();
         $this->produits = new ArrayCollection();
         $this->marchesProducteurs = new ArrayCollection();
-    }
-
-    public function getId(): ?int
-    {
-        return $this->id;
     }
 
     public function getDescription(): ?string
@@ -103,7 +99,7 @@ class Producteur extends User
         return $this;
     }
 
-    public function removeMarch(Marche $march): static
+    public function removeMarche(Marche $march): static
     {
         if ($this->marchesProducteurs->removeElement($march)) {
             $march->removeProducteur($this);
