@@ -19,12 +19,16 @@ class AppFixtures extends Fixture
 
         $this->createUsers($faker, $manager);
         $manager->flush();
+
         $this->createCategories($faker, $manager);
         $manager->flush();
+
         $this->createMarches($faker, $manager);
         $manager->flush();
+
         $this->createProduits($faker, $manager);
         $manager->flush();
+
         $this->createProducteurs($faker, $manager);
         $manager->flush();
     }
