@@ -59,7 +59,7 @@ class User
 
     #[ORM\Column(length: 255, nullable: true)]
     #[Assert\Length(
-        exact: 10,
+        exactly: 10,
         exactMessage: 'Le numéro de téléphone doit faire exactement {{ limit }} chiffres.'
     )]
     #[Assert\Regex(
