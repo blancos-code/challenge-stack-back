@@ -95,6 +95,11 @@ class User
         $this->marchesProprietaire = new ArrayCollection();
     }
 
+    public function __toString(): string
+    {
+        return $this->nom." ".$this->prenom; // Modifier en fonction de votre logique
+    }
+
     public function getId(): ?int
     {
         return $this->id;
