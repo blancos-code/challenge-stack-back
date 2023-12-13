@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: MarcheRepository::class)]
@@ -29,18 +30,21 @@ class Marche
     #[Assert\NotBlank(
         message: 'L\'adresse du marché ne peut pas être vide'
     )]
+    #[Groups(["read", "write"])]
     private ?string $adresse = null;
 
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
     #[Assert\NotBlank(
         message: 'La date du marché ne peut pas être vide'
     )]
+    #[Groups(["read", "write"])]
     private ?\DateTimeImmutable $dateDebut = null;
 
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
     #[Assert\NotBlank(
         message: 'L\'heure du marché ne peut pas être vide'
     )]
+    #[Groups(["read", "write"])]
     private ?\DateTimeImmutable $dateFin = null;
 
     #[ORM\ManyToMany(targetEntity: Producteur::class, inversedBy: 'marchesProducteurs')]
@@ -68,6 +72,7 @@ class Marche
     #[Assert\NotBlank(
         message: 'Le nom du marché ne peut pas être vide'
     )]
+    #[Groups(["read", "write"])]
     private ?string $nom = null;
 
     public function __construct()
