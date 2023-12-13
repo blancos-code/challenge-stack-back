@@ -119,7 +119,7 @@ class User
         return $this->marcheProprietaires;
     }
 
-    public function addMarch(Marche $march): static
+    public function addMarche(Marche $march): static
     {
         if (!$this->marcheProprietaires->contains($march)) {
             $this->marcheProprietaires->add($march);

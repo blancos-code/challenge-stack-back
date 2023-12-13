@@ -83,7 +83,7 @@ class Producteur extends User
         return $this->marches;
     }
 
-    public function addMarch(Marche $march): static
+    public function addMarche(Marche $march): static
     {
         if (!$this->marches->contains($march)) {
             $this->marches->add($march);

@@ -21,6 +21,9 @@ class Produit
     #[ORM\ManyToOne(inversedBy: 'produits')]
     private ?Producteur $producteur = null;
 
+    #[ORM\Column]
+    private ?float $prix = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -46,6 +49,18 @@ class Produit
     public function setProducteur(?Producteur $producteur): static
     {
         $this->producteur = $producteur;
+
+        return $this;
+    }
+
+    public function getPrix(): ?float
+    {
+        return $this->prix;
+    }
+
+    public function setPrix(float $prix): static
+    {
+        $this->prix = $prix;
 
         return $this;
     }

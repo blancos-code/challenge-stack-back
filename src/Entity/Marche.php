@@ -40,6 +40,9 @@ class Marche
     #[ORM\ManyToOne(inversedBy: 'marches')]
     private ?Categorie $categorie = null;
 
+    #[ORM\Column(length: 255)]
+    private ?string $nom = null;
+
     public function __construct()
     {
         $this->producteurs = new ArrayCollection();
@@ -155,6 +158,18 @@ class Marche
     public function setCategorie(?Categorie $categorie): static
     {
         $this->categorie = $categorie;
+
+        return $this;
+    }
+
+    public function getNom(): ?string
+    {
+        return $this->nom;
+    }
+
+    public function setNom(string $nom): static
+    {
+        $this->nom = $nom;
 
         return $this;
     }
