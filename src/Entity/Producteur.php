@@ -12,17 +12,20 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ProducteurRepository::class)]
 #[ApiResource(normalizationContext: ['groups' => ['read']], denormalizationContext: ['groups' => ['write']])]
-class Producteur extends User
+class Producteur
 {
+
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
+    private ?int $id = null;
+
     #[ORM\Column(type: Types::TEXT)]
     #[Assert\Length(
         min: 10,
         max: 255,
         minMessage: 'La description du producteur doit faire au moins {{ limit }} caractères.',
         maxMessage: 'La description du producteur doit faire moins de {{ limit }} caractères.'
-    )]
-    #[Assert\NotBlank(
-        message: 'La description du producteur ne peut pas être vide'
     )]
     private ?string $description = null;
 
@@ -32,11 +35,30 @@ class Producteur extends User
     #[ORM\ManyToMany(targetEntity: Marche::class, mappedBy: 'producteurs')]
     private Collection $marchesProducteurs;
 
+    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    private ?User $utilisateur = null;
+
+    public function __toString(): string
+    {
+        return $this->utilisateur->getNom()." ".$this->utilisateur->getPrenom();
+    }
+
     public function __construct()
     {
-        parent::__construct();
+        // parent::__construct();
         $this->produits = new ArrayCollection();
         $this->marchesProducteurs = new ArrayCollection();
+    }
+
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    // TODO
+    public function getNomComplet()
+    {
+        return 'benoit';
     }
 
     public function getDescription(): ?string
@@ -104,6 +126,18 @@ class Producteur extends User
         if ($this->marchesProducteurs->removeElement($march)) {
             $march->removeProducteur($this);
         }
+
+        return $this;
+    }
+
+    public function getUtilisateur(): ?User
+    {
+        return $this->utilisateur;
+    }
+
+    public function setUtilisateur(?User $utilisateur): static
+    {
+        $this->utilisateur = $utilisateur;
 
         return $this;
     }

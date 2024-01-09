@@ -81,6 +81,11 @@ class Marche
         $this->clientsInscrits = new ArrayCollection();
     }
 
+    public function __toString(): string
+    {
+        return $this->nom; // Modifier en fonction de votre logique
+    }
+
     public function getId(): ?int
     {
         return $this->id;

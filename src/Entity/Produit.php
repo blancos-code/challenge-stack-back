@@ -37,6 +37,11 @@ class Produit
     #[ORM\Column]
     private ?float $prix = null;
 
+    public function __toString(): string
+    {
+        return $this->nom;
+    }
+
     public function getId(): ?int
     {
         return $this->id;

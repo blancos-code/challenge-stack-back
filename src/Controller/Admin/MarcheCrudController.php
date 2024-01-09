@@ -16,30 +16,10 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 
 class MarcheCrudController extends AbstractCrudController
 {
-    private EntityManagerInterface $entityManager;
-
-    public function __construct(EntityManagerInterface $entityManager)
-    {
-        $this->entityManager = $entityManager;
-    }
     
     public static function getEntityFqcn(): string
     {
         return Marche::class;
-    }
-
-    private function getProprietairesChoices(): array
-    {
-        // Récupérer la liste des propriétaires depuis la base de données
-        $proprietaires = $this->entityManager->getRepository(Producteur::class)->findAll();
-
-        // Générer un tableau associatif pour les choix
-        $choices = [];
-        foreach ($proprietaires as $proprietaire) {
-            $choices[$proprietaire->getId()] = $proprietaire->getNomComplet(); // Assurez-vous d'ajuster cela en fonction de votre logique
-        }
-
-        return $choices;
     }
     
     public function configureFields(string $pageName): iterable
@@ -52,15 +32,9 @@ class MarcheCrudController extends AbstractCrudController
             yield AssociationField::new('proprietaire')
             ->setLabel('Propriétaire')
             ->setRequired(true),
-            ChoiceField::new('producteurs')
-                ->setLabel('Producteurs')
-                ->setFormTypeOptions([
-                    'choices' => $this->getProprietairesChoices(),
-                    'multiple' => true,
-                    'expanded' => false,
-                ]),
-        
+            yield AssociationField::new('categorie')
+            ->setLabel('Catégorie')
+            ->setRequired(true),
         ];
     }
-    
 }
