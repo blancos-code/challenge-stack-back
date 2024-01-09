@@ -15,30 +15,10 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 
 class ProduitCrudController extends AbstractCrudController
 {
-
-    private EntityManagerInterface $entityManager;
-
-    public function __construct(EntityManagerInterface $entityManager)
-    {
-        $this->entityManager = $entityManager;
-    }
-
     
     public static function getEntityFqcn(): string
     {
         return Produit::class;
-    }
-
-    private function getProprietairesChoices(): array
-    {
-        $proprietaires = $this->entityManager->getRepository(Producteur::class)->findAll();
-
-        $choices = [];
-        foreach ($proprietaires as $proprietaire) {
-            $choices[$proprietaire->getId()] = $proprietaire->getNomComplet();
-        }
-
-        return $choices;
     }
 
     public function configureFields(string $pageName): iterable

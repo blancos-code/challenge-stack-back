@@ -29,9 +29,6 @@ class Produit
     private ?string $nom = null;
 
     #[ORM\ManyToOne(inversedBy: 'produits')]
-    #[Assert\NotBlank(
-        message: 'Le producteur ne peut pas être vide'
-    )]
     private ?Producteur $producteur = null;
 
     #[ORM\Column]

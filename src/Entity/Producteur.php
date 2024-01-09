@@ -29,7 +29,7 @@ class Producteur
     )]
     private ?string $description = null;
 
-    #[ORM\OneToMany(mappedBy: 'producteur', targetEntity: Produit::class)]
+    #[ORM\OneToMany(mappedBy: 'producteur', targetEntity: Produit::class, cascade: ["remove", "persist","refresh"])]
     private Collection $produits;
 
     #[ORM\ManyToMany(targetEntity: Marche::class, mappedBy: 'producteurs')]
