@@ -38,6 +38,9 @@ class Producteur
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     private ?User $utilisateur = null;
 
+    #[ORM\Column]
+    private ?float $note = 0;
+
     public function __toString(): string
     {
         return $this->utilisateur->getNom()." ".$this->utilisateur->getPrenom();
@@ -132,6 +135,18 @@ class Producteur
     public function setUtilisateur(?User $utilisateur): static
     {
         $this->utilisateur = $utilisateur;
+
+        return $this;
+    }
+
+    public function getNote(): ?float
+    {
+        return $this->note;
+    }
+
+    public function setNote(float $note): static
+    {
+        $this->note = $note;
 
         return $this;
     }
