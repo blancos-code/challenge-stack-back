@@ -55,12 +55,6 @@ class Producteur
         return $this->id;
     }
 
-    // TODO
-    public function getNomComplet()
-    {
-        return 'benoit';
-    }
-
     public function getDescription(): ?string
     {
         return $this->description;

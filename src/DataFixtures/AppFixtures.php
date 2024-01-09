@@ -89,11 +89,6 @@ class AppFixtures extends Fixture
     {
         for ($i = 0; $i < 10; $i++) {
             $producteur = new Producteur();
-            $producteur->setPrenom($faker->firstName);
-            $producteur->setNom($faker->lastName);
-            $producteur->setEmail($faker->email);
-            $producteur->setTel($faker->phoneNumber);
-            $producteur->setAdresse($faker->address);
             $producteur->setDescription($faker->text);
             $producteur->addMarche($faker->randomElement($manager->getRepository(Marche::class)->findAll()));
             $producteur->addProduit($faker->randomElement($manager->getRepository(Produit::class)->findAll()));
