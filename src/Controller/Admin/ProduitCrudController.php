@@ -25,8 +25,6 @@ class ProduitCrudController extends AbstractCrudController
     {
         return [
             TextField::new('nom'),
-            NumberField::new('prix')->setFormTypeOptions(['scale' => 2]),
-            AssociationField::new('producteur', 'Producteur'),
         ];
     }
 }

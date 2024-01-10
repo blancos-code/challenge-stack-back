@@ -29,9 +29,6 @@ class Producteur
     )]
     private ?string $description = null;
 
-    #[ORM\OneToMany(mappedBy: 'producteur', targetEntity: Produit::class, cascade: ["remove", "persist","refresh"])]
-    private Collection $produits;
-
     #[ORM\ManyToMany(targetEntity: Marche::class, mappedBy: 'producteurs')]
     private Collection $marchesProducteurs;
 
@@ -41,6 +38,12 @@ class Producteur
     #[ORM\Column]
     private ?float $note = 0;
 
+    #[ORM\OneToMany(mappedBy: 'producteur', targetEntity: PrixProduits::class, fetch:"EAGER", cascade: ['all', 'remove'])]
+    private Collection $prixProduits;
+
+    #[ORM\OneToMany(mappedBy: 'producteur', targetEntity: PrixProduits::class,cascade: ['all', 'remove','persist'])]
+    private Collection $prixProduit;
+
     public function __toString(): string
     {
         return $this->utilisateur->getNom()." ".$this->utilisateur->getPrenom();
@@ -49,8 +52,9 @@ class Producteur
     public function __construct()
     {
         // parent::__construct();
-        $this->produits = new ArrayCollection();
         $this->marchesProducteurs = new ArrayCollection();
+        $this->prixProduits = new ArrayCollection();
+        $this->prixProduit = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -66,36 +70,6 @@ class Producteur
     public function setDescription(string $description): static
     {
         $this->description = $description;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Produit>
-     */
-    public function getProduits(): Collection
-    {
-        return $this->produits;
-    }
-
-    public function addProduit(Produit $produit): static
-    {
-        if (!$this->produits->contains($produit)) {
-            $this->produits->add($produit);
-            $produit->setProducteur($this);
-        }
-
-        return $this;
-    }
-
-    public function removeProduit(Produit $produit): static
-    {
-        if ($this->produits->removeElement($produit)) {
-            // set the owning side to null (unless already changed)
-            if ($produit->getProducteur() === $this) {
-                $produit->setProducteur(null);
-            }
-        }
 
         return $this;
     }
@@ -147,6 +121,62 @@ class Producteur
     public function setNote(float $note): static
     {
         $this->note = $note;
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, PrixProduits>
+     */
+    public function getPrixProduits(): Collection
+    {
+        return $this->prixProduits;
+    }
+
+    public function addPrixProduits(PrixProduits $prix): static
+    {
+        if (!$this->prixProduits->contains($prix)) {
+            $this->prixProduits->add($prix);
+            // $march->addProducteur($this);
+        }
+
+        return $this;
+    }
+
+    public function removePrixProduits(PrixProduits $prix): static
+    {
+        if ($this->prixProduits->removeElement($prix)) {
+            // $march->removeProducteur($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, PrixProduits>
+     */
+    public function getPrixProduit(): Collection
+    {
+        return $this->prixProduit;
+    }
+
+    public function addPrixProduit(PrixProduits $prixProduit): static
+    {
+        if (!$this->prixProduit->contains($prixProduit)) {
+            $this->prixProduit->add($prixProduit);
+            $prixProduit->setProducteur($this);
+        }
+
+        return $this;
+    }
+
+    public function removePrixProduit(PrixProduits $prixProduit): static
+    {
+        if ($this->prixProduit->removeElement($prixProduit)) {
+            // set the owning side to null (unless already changed)
+            if ($prixProduit->getProducteur() === $this) {
+                $prixProduit->setProducteur(null);
+            }
+        }
 
         return $this;
     }

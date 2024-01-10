@@ -4,6 +4,7 @@ namespace App\Controller\Admin;
 
 use App\Entity\Produit;
 use App\Entity\Producteur;
+use App\Form\PrixProduitType;
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
@@ -33,17 +34,20 @@ class ProducteurCrudController extends AbstractCrudController
     {
         return [
             AssociationField::new('utilisateur', 'Utilisateur'),
-            ArrayField::new('produits', 'Produit')
+            TextEditorField::new('description'),
+            CollectionField::new('prixProduits', 'Produit')
+                ->setEntryIsComplex(true)
                 ->setFormTypeOptions([
-                    'by_reference' => false,
-                    'delete_empty' => true,
-                    'allow_delete' => false,
-                    'allow_add' => false, // Désactiver l'ajout d'éléments
-                    'entry_options' => [
-                        'disabled' => true,
+                    'by_reference' => false, // Permet de traiter les modifications comme des ajouts
+                ])
+                ->setCustomOptions([
+                    'allowAdd' => true,
+                    'allowDelete' => true,
+                    'entryType' => PrixProduitType::class,
+                    'entryOptions' => [
+                        'label' => false,
                     ],
                 ]),
-            TextEditorField::new('description'),
         ];
     }
     
