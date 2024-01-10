@@ -74,6 +74,7 @@ class AppFixtures extends Fixture
             $marche->setAdresse($faker->address);
             $marche->setDateDebut(new DateTimeImmutable($faker->dateTime->format('Y-m-d H:i:s')));
             $marche->setDateFin(new DateTimeImmutable($faker->dateTime->format('Y-m-d H:i:s')));
+            $marche->setDescription($faker->words);
             $marche->setProprietaire($faker->randomElement($manager->getRepository(User::class)->findAll()));
             $marche->setCategorie($faker->randomElement($manager->getRepository(Categorie::class)->findAll()));
             $manager->persist($marche);
