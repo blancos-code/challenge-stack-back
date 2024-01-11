@@ -16,16 +16,10 @@ class PrixProduitType extends AbstractType
     {
         $builder
             ->add('prix')
-            ->add('producteur', EntityType::class, [
-                'disabled' => true,
-                'class' => Producteur::class,
-                'choice_label' => 'utilisateur',
-                ])
             ->add('produit', EntityType::class, [
                 'class' => Produit::class,
                 'choice_label' => 'nom',
-            ])
-        ;
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

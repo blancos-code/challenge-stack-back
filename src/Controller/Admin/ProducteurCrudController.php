@@ -9,6 +9,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ArrayField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
@@ -35,6 +36,10 @@ class ProducteurCrudController extends AbstractCrudController
         return [
             AssociationField::new('utilisateur', 'Utilisateur'),
             TextEditorField::new('description'),
+            NumberField::new('note', 'Note /5')->setFormTypeOptions([
+                'scale' => 2, // Spécifiez l'échelle pour les nombres à virgule flottante
+            ])
+            ->setRequired(false),
             CollectionField::new('prixProduits', 'Produit')
                 ->setEntryIsComplex(true)
                 ->setFormTypeOptions([
