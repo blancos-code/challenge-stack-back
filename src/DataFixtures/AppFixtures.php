@@ -4,6 +4,7 @@ namespace App\DataFixtures;
 
 use App\Entity\Categorie;
 use App\Entity\Marche;
+use App\Entity\PrixProduits;
 use App\Entity\Producteur;
 use App\Entity\Produit;
 use App\Entity\User;
@@ -34,6 +35,7 @@ class AppFixtures extends Fixture
         $this->createProducteurs($faker, $manager);
         $manager->flush();
     }
+
     public function createUsers(Generator $faker, ObjectManager $manager): void
     {
         for ($i = 0; $i < 10; $i++) {
@@ -91,10 +93,9 @@ class AppFixtures extends Fixture
             $producteur = new Producteur();
             $producteur->setDescription($faker->text);
             $producteur->addMarche($faker->randomElement($manager->getRepository(Marche::class)->findAll()));
-            $producteur->addProduit($faker->randomElement($manager->getRepository(Produit::class)->findAll()));
-            $producteur->addProduit($faker->randomElement($manager->getRepository(Produit::class)->findAll()));
-            $producteur->addProduit($faker->randomElement($manager->getRepository(Produit::class)->findAll()));
+            $producteur->setUtilisateur($faker->randomElement($manager->getRepository(User::class)->findAll()));
 
+            
             $manager->persist($producteur);
         }
     }
@@ -108,8 +109,21 @@ class AppFixtures extends Fixture
         for ($i = 0; $i < 10; $i++) {
             $produit = new Produit();
             $produit->setNom($faker->word);
-            $produit->setPrix($faker->randomFloat(2, 0, 100));
             $manager->persist($produit);
+        }
+    }
+
+    public function createPrixProduit(Generator $faker, ObjectManager $manager): void
+    {
+        for ($i = 0; $i < 5; $i++) {
+            $prixProduit = new PrixProduits();
+            $produit = $faker->randomElement($manager->getRepository(Produit::class)->findAll());
+            $producteur = $faker->randomElement($manager->getRepository(Producteur::class)->findAll());
+
+            $prixProduit->setProduit($produit);
+            $prixProduit->setProducteur($producteur);
+            $prixProduit->setPrix($faker->randomDigitNotZero());
+            $manager->persist($prixProduit);
         }
     }
 }
