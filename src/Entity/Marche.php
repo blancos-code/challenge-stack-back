@@ -57,7 +57,7 @@ class Marche
 
     #[ORM\ManyToOne(inversedBy: 'marchesProprietaire')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?User $proprietaire = null;
+    private ?Producteur $proprietaire = null;
 
     #[ORM\ManyToOne(inversedBy: 'marches')]
     private ?Categorie $categorie = null;
@@ -181,12 +181,12 @@ class Marche
         return $this;
     }
 
-    public function getProprietaire(): ?User
+    public function getProprietaire(): ?Producteur
     {
         return $this->proprietaire;
     }
 
-    public function setProprietaire(?User $proprietaire): static
+    public function setProprietaire(?Producteur $proprietaire): static
     {
         $this->proprietaire = $proprietaire;
 
