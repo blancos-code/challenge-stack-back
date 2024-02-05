@@ -94,6 +94,9 @@ class User
     #[ORM\OneToMany(mappedBy: 'redacteur', targetEntity: CommentaireProducteur::class)]
     private Collection $commentaireProducteurs;
 
+    #[ORM\Column]
+    private ?bool $isBanned = null;
+
     public function __construct()
     {
         $this->marchesInscrits = new ArrayCollection();
@@ -304,6 +307,18 @@ class User
                 $commentaireProducteur->setRedacteur(null);
             }
         }
+
+        return $this;
+    }
+
+    public function isIsBanned(): ?bool
+    {
+        return $this->isBanned;
+    }
+
+    public function setIsBanned(bool $isBanned): static
+    {
+        $this->isBanned = $isBanned;
 
         return $this;
     }
