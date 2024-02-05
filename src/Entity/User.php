@@ -62,8 +62,8 @@ class User
         exactMessage: 'Le numéro de téléphone doit faire exactement {{ limit }} chiffres.'
     )]
     #[Assert\Regex(
-        pattern: '/^0[0-9]{9}$/',
-        message: 'Le numéro de téléphone doit commencer par 0 suivi de 9 chiffres.'
+        pattern: '/^(0|\+33|00)[1-9][0-9]{8}$/',
+        message: 'Le numéro de téléphone doit commencer par 0, +33, ou 00 suivi de 9 chiffres.'
     )]
     private ?string $tel = null;
 

@@ -30,7 +30,7 @@ class CommentaireMarche
 
     public function __toString(): string
     {
-        return $this->titre;
+        return $this->titre.' : '.$this->redacteur;
     }
 
     public function getId(): ?int
