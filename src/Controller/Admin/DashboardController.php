@@ -8,6 +8,8 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
+use App\Controller\Admin\CommentaireMarcheCrudController;
+use App\Entity\CommentaireProducteur;
 
 class DashboardController extends AbstractDashboardController
 {
@@ -47,10 +49,12 @@ class DashboardController extends AbstractDashboardController
             MenuItem::section('Marché'),
             MenuItem::linkToCrud('Marchés', 'fa fa-tags', MarcheCrudController::getEntityFqcn()),
             MenuItem::linkToCrud('Categories', 'fa fa-tags', CategorieCrudController::getEntityFqcn()),
+            MenuItem::linkToCrud('Commentaires', 'fa fa-tags', CommentaireMarcheCrudController::getEntityFqcn()),
             
             MenuItem::section('Producteurs'),
             MenuItem::linkToCrud('Producteurs', 'fa fa-file-text', ProducteurCrudController::getEntityFqcn()),
             MenuItem::linkToCrud('Produits', 'fa fa-file-text', ProduitCrudController::getEntityFqcn()),
+            MenuItem::linkToCrud('Commentaires', 'fa fa-tags', CommentaireProducteurCrudController::getEntityFqcn()),
 
             MenuItem::section('Utilisateurs'),
             MenuItem::linkToCrud('Utilisateurs', 'fa fa-user', UserCrudController::getEntityFqcn()),

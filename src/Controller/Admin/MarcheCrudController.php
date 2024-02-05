@@ -35,6 +35,9 @@ class MarcheCrudController extends AbstractCrudController
             yield AssociationField::new('categorie')
             ->setLabel('Catégorie')
             ->setRequired(true),
+            yield AssociationField::new('commentaireMarches')
+            ->setLabel('Commentaires')
+            ->setRequired(false),
         ];
     }
 }

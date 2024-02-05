@@ -88,11 +88,19 @@ class User
     #[ORM\OneToMany(targetEntity: Marche::class, mappedBy: 'proprietaire')]
     private Collection $marchesProprietaire;
 
+    #[ORM\OneToMany(mappedBy: 'redacteur', targetEntity: CommentaireMarche::class)]
+    private Collection $commentaireMarches;
+
+    #[ORM\OneToMany(mappedBy: 'redacteur', targetEntity: CommentaireProducteur::class)]
+    private Collection $commentaireProducteurs;
+
     public function __construct()
     {
         $this->marchesInscrits = new ArrayCollection();
         $this->marchesFavoris = new ArrayCollection();
         $this->marchesProprietaire = new ArrayCollection();
+        $this->commentaireMarches = new ArrayCollection();
+        $this->commentaireProducteurs = new ArrayCollection();
     }
 
     public function __toString(): string
@@ -236,6 +244,66 @@ class User
     public function removeMarchesProprietaire(Marche $marchesProprietaire): static
     {
         $this->marchesProprietaire->removeElement($marchesProprietaire);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, CommentaireMarche>
+     */
+    public function getCommentaireMarches(): Collection
+    {
+        return $this->commentaireMarches;
+    }
+
+    public function addCommentaireMarch(CommentaireMarche $commentaireMarch): static
+    {
+        if (!$this->commentaireMarches->contains($commentaireMarch)) {
+            $this->commentaireMarches->add($commentaireMarch);
+            $commentaireMarch->setRedacteur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCommentaireMarch(CommentaireMarche $commentaireMarch): static
+    {
+        if ($this->commentaireMarches->removeElement($commentaireMarch)) {
+            // set the owning side to null (unless already changed)
+            if ($commentaireMarch->getRedacteur() === $this) {
+                $commentaireMarch->setRedacteur(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, CommentaireProducteur>
+     */
+    public function getCommentaireProducteurs(): Collection
+    {
+        return $this->commentaireProducteurs;
+    }
+
+    public function addCommentaireProducteur(CommentaireProducteur $commentaireProducteur): static
+    {
+        if (!$this->commentaireProducteurs->contains($commentaireProducteur)) {
+            $this->commentaireProducteurs->add($commentaireProducteur);
+            $commentaireProducteur->setRedacteur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCommentaireProducteur(CommentaireProducteur $commentaireProducteur): static
+    {
+        if ($this->commentaireProducteurs->removeElement($commentaireProducteur)) {
+            // set the owning side to null (unless already changed)
+            if ($commentaireProducteur->getRedacteur() === $this) {
+                $commentaireProducteur->setRedacteur(null);
+            }
+        }
 
         return $this;
     }

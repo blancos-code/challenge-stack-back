@@ -81,10 +81,14 @@ class Marche
     #[ORM\Column]
     private ?float $note = 0;
 
+    #[ORM\OneToMany(mappedBy: 'marche', targetEntity: CommentaireMarche::class)]
+    private Collection $commentaireMarches;
+
     public function __construct()
     {
         $this->producteurs = new ArrayCollection();
         $this->clientsInscrits = new ArrayCollection();
+        $this->commentaireMarches = new ArrayCollection();
     }
 
     public function __toString(): string
@@ -239,5 +243,44 @@ class Marche
         $this->note = $note;
 
         return $this;
+    }
+
+    /**
+     * @return Collection<int, CommentaireMarche>
+     */
+    public function getCommentaireMarches(): Collection
+    {
+        return $this->commentaireMarches;
+    }
+
+    public function addCommentaireMarch(CommentaireMarche $commentaireMarch): static
+    {
+        if (!$this->commentaireMarches->contains($commentaireMarch)) {
+            $this->commentaireMarches->add($commentaireMarch);
+            $commentaireMarch->setMarche($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCommentaireMarch(CommentaireMarche $commentaireMarch): static
+    {
+        if ($this->commentaireMarches->removeElement($commentaireMarch)) {
+            // set the owning side to null (unless already changed)
+            if ($commentaireMarch->getMarche() === $this) {
+                $commentaireMarch->setMarche(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getMoyenneNotes(): ?float
+    {
+        $notes = $this->commentaireMarches->map(function (CommentaireMarche $commentaire) {
+            return $commentaire->getNote();
+        });
+
+        return $notes->count() > 0 ? $notes->sum() / $notes->count() : null;
     }
 }

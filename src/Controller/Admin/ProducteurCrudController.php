@@ -36,14 +36,10 @@ class ProducteurCrudController extends AbstractCrudController
         return [
             AssociationField::new('utilisateur', 'Utilisateur'),
             TextEditorField::new('description'),
-            NumberField::new('note', 'Note /5')->setFormTypeOptions([
-                'scale' => 2, // Spécifiez l'échelle pour les nombres à virgule flottante
-            ])
-            ->setRequired(false),
             CollectionField::new('prixProduits', 'Produit')
                 ->setEntryIsComplex(true)
                 ->setFormTypeOptions([
-                    'by_reference' => false, // Permet de traiter les modifications comme des ajouts
+                    'by_reference' => false,
                 ])
                 ->setCustomOptions([
                     'allowAdd' => true,
@@ -53,6 +49,9 @@ class ProducteurCrudController extends AbstractCrudController
                         'label' => false,
                     ],
                 ]),
+            AssociationField::new('commentaireProducteurs')
+            ->setLabel('Commentaires')
+            ->setRequired(false),
         ];
     }
     

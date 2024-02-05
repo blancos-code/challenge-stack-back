@@ -44,6 +44,9 @@ class Producteur
     #[ORM\OneToMany(mappedBy: 'producteur', targetEntity: PrixProduits::class,cascade: ['all', 'remove','persist'])]
     private Collection $prixProduit;
 
+    #[ORM\OneToMany(mappedBy: 'producteur', targetEntity: CommentaireProducteur::class)]
+    private Collection $commentaireProducteurs;
+
     public function __toString(): string
     {
         return $this->utilisateur->getNom()." ".$this->utilisateur->getPrenom();
@@ -55,6 +58,7 @@ class Producteur
         $this->marchesProducteurs = new ArrayCollection();
         $this->prixProduits = new ArrayCollection();
         $this->prixProduit = new ArrayCollection();
+        $this->commentaireProducteurs = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -175,6 +179,36 @@ class Producteur
             // set the owning side to null (unless already changed)
             if ($prixProduit->getProducteur() === $this) {
                 $prixProduit->setProducteur(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, CommentaireProducteur>
+     */
+    public function getCommentaireProducteurs(): Collection
+    {
+        return $this->commentaireProducteurs;
+    }
+
+    public function addCommentaireProducteur(CommentaireProducteur $commentaireProducteur): static
+    {
+        if (!$this->commentaireProducteurs->contains($commentaireProducteur)) {
+            $this->commentaireProducteurs->add($commentaireProducteur);
+            $commentaireProducteur->setProducteur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCommentaireProducteur(CommentaireProducteur $commentaireProducteur): static
+    {
+        if ($this->commentaireProducteurs->removeElement($commentaireProducteur)) {
+            // set the owning side to null (unless already changed)
+            if ($commentaireProducteur->getProducteur() === $this) {
+                $commentaireProducteur->setProducteur(null);
             }
         }
 
