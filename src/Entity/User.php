@@ -7,8 +7,10 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
 use ApiPlatform\Metadata\ApiResource;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\HttpFoundation\File\File;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
@@ -101,6 +103,13 @@ class User
 
     #[ORM\Column]
     private ?bool $isBanned = null;
+
+    #[ORM\Column(type:"string", length:255)]
+    private $imageName = null;
+
+    #[Vich\UploadableField(mapping:"User", fileNameProperty:"imageName")]
+    private $imageFile;
+
 
     public function __construct()
     {
@@ -324,6 +333,35 @@ class User
     public function setIsBanned(bool $isBanned): static
     {
         $this->isBanned = $isBanned;
+
+        return $this;
+    }
+
+    public function getImageName(): ?string
+    {
+        return $this->imageName;
+    }
+
+    public function setImageName(?string $imageName): self
+    {
+        $this->imageName = $imageName;
+
+        return $this;
+    }
+
+    public function getImageFile(): ?File
+    {
+        return $this->imageFile;
+    }
+
+    public function setImageFile(?File $imageFile = null): self
+    {
+        $this->imageFile = $imageFile;
+
+        if ($imageFile !== null) {
+            // C'est important pour déclencher l'événement de téléchargement
+            // $this->updatedAt = new \DateTimeImmutable();
+        }
 
         return $this;
     }
