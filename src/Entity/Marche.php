@@ -10,6 +10,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 #[ORM\Entity(repositoryClass: MarcheRepository::class)]
 #[ApiResource(normalizationContext: ['groups' => ['read']], denormalizationContext: ['groups' => ['write']])]
@@ -74,6 +75,17 @@ class Marche
     )]
     #[Groups(["read", "write"])]
     private ?string $nom = null;
+
+    #[Assert\Callback]
+    public function validate(ExecutionContextInterface $context)
+    {
+        // Mettez votre logique de validation ici
+        if ($this->dateDebut > $this->dateFin) {
+            $context->buildViolation('Dates invalides')
+                ->atPath('dateFin')
+                ->addViolation();
+        }
+    }
 
     public function __construct()
     {
