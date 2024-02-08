@@ -50,8 +50,6 @@ class Marche
     private ?\DateTimeImmutable $dateFin = null;
 
     #[ORM\ManyToMany(targetEntity: Producteur::class, inversedBy: 'marchesProducteurs')]
-    // TODO : repasser pour vérifier si nécessaire
-    // #[ORM\JoinColumn(nullable: true, onDelete: 'CASCADE')]
     private Collection $producteurs;
 
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'marchesInscrits')]
@@ -89,10 +87,30 @@ class Marche
         }
     }
 
+    #[ORM\OneToMany(mappedBy: 'marche', targetEntity: CommentaireMarche::class)]
+    private Collection $commentaireMarches;
+
+    /**
+     * @return Collection
+     */
+    public function getCommentaireMarches(): Collection
+    {
+        return $this->commentaireMarches;
+    }
+
+    /**
+     * @param Collection $commentaireMarches
+     */
+    public function setCommentaireMarches(Collection $commentaireMarches): void
+    {
+        $this->commentaireMarches = $commentaireMarches;
+    }
+
     public function __construct()
     {
         $this->producteurs = new ArrayCollection();
         $this->clientsInscrits = new ArrayCollection();
+        $this->commentaireMarches = new ArrayCollection();
     }
 
     public function getId(): ?int

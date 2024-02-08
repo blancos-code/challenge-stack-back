@@ -90,7 +90,7 @@ class User
     #[ORM\ManyToMany(targetEntity: Marche::class)]
     private Collection $marchesFavoris;
 
-    #[ORM\OneToMany(targetEntity: Marche::class, mappedBy: 'proprietaire')]
+    #[ORM\OneToMany(mappedBy: 'proprietaire', targetEntity: Marche::class)]
     private Collection $marchesProprietaire;
 
     #[ORM\OneToMany(mappedBy: 'redacteur', targetEntity: CommentaireMarche::class)]
