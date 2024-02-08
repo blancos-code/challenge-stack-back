@@ -2,9 +2,11 @@
 
 namespace App\Entity;
 
+use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\ProduitRepository;
-use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ProduitRepository::class)]
@@ -28,15 +30,19 @@ class Produit
     )]
     private ?string $nom = null;
 
-    #[ORM\ManyToOne(inversedBy: 'produits')]
-    #[Assert\NotBlank(
-        message: 'Le producteur ne peut pas être vide'
-    )]
-    private ?Producteur $producteur = null;
+    #[ORM\OneToMany(mappedBy: 'produit', targetEntity: PrixProduits::class)]
+    private Collection $prixProduits;
 
-    #[ORM\Column]
-    private ?float $prix = null;
+    public function __toString(): string
+    {
+        return $this->nom;
+    }
 
+    public function __construct()
+    {
+        $this->prixProduits = new ArrayCollection();
+    }
+    
     public function getId(): ?int
     {
         return $this->id;
@@ -54,26 +60,32 @@ class Produit
         return $this;
     }
 
-    public function getProducteur(): ?Producteur
+    /**
+     * @return Collection<int, PrixProduits>
+     */
+    public function getPrixProduits(): Collection
     {
-        return $this->producteur;
+        return $this->prixProduits;
     }
 
-    public function setProducteur(?Producteur $producteur): static
+    public function addPrixProduit(PrixProduits $prixProduit): static
     {
-        $this->producteur = $producteur;
+        if (!$this->prixProduits->contains($prixProduit)) {
+            $this->prixProduits->add($prixProduit);
+            $prixProduit->setProduit($this);
+        }
 
         return $this;
     }
 
-    public function getPrix(): ?float
+    public function removePrixProduit(PrixProduits $prixProduit): static
     {
-        return $this->prix;
-    }
-
-    public function setPrix(float $prix): static
-    {
-        $this->prix = $prix;
+        if ($this->prixProduits->removeElement($prixProduit)) {
+            // set the owning side to null (unless already changed)
+            if ($prixProduit->getProduit() === $this) {
+                $prixProduit->setProduit(null);
+            }
+        }
 
         return $this;
     }

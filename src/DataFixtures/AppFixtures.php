@@ -4,6 +4,7 @@ namespace App\DataFixtures;
 
 use App\Entity\Categorie;
 use App\Entity\Marche;
+use App\Entity\PrixProduits;
 use App\Entity\Producteur;
 use App\Entity\Produit;
 use App\Entity\User;
@@ -22,6 +23,9 @@ class AppFixtures extends Fixture
         $this->createUsers($faker, $manager);
         $manager->flush();
 
+        $this->createProducteurs($faker, $manager);
+        $manager->flush();
+
         $this->createCategories($faker, $manager);
         $manager->flush();
 
@@ -31,9 +35,10 @@ class AppFixtures extends Fixture
         $this->createProduits($faker, $manager);
         $manager->flush();
 
-        $this->createProducteurs($faker, $manager);
+        $this->createPrixProduit($faker, $manager);
         $manager->flush();
     }
+
     public function createUsers(Generator $faker, ObjectManager $manager): void
     {
         for ($i = 0; $i < 10; $i++) {
@@ -61,6 +66,25 @@ class AppFixtures extends Fixture
         }
     }
 
+
+    /**
+     * @param Generator $faker
+     * @param ObjectManager $manager
+     * @return void
+     */
+    public function createProducteurs(Generator $faker, ObjectManager $manager): void
+    {
+        for ($i = 0; $i < 1; $i++) {
+            $producteur = new Producteur();
+            $producteur->setDescription($faker->text);
+            // $producteur->addMarche($faker->randomElement($manager->getRepository(Marche::class)->findAll()));
+            $producteur->setUtilisateur($faker->randomElement($manager->getRepository(User::class)->findAll()));
+            
+            $manager->persist($producteur);
+        }
+    }
+
+
     /**
      * @param Generator $faker
      * @param ObjectManager $manager
@@ -74,35 +98,12 @@ class AppFixtures extends Fixture
             $marche->setAdresse($faker->address);
             $marche->setDateDebut(new DateTimeImmutable($faker->dateTime->format('Y-m-d H:i:s')));
             $marche->setDateFin(new DateTimeImmutable($faker->dateTime->format('Y-m-d H:i:s')));
-            $marche->setProprietaire($faker->randomElement($manager->getRepository(User::class)->findAll()));
+            $marche->setProprietaire($faker->randomElement($manager->getRepository(Producteur::class)->findAll()));
             $marche->setCategorie($faker->randomElement($manager->getRepository(Categorie::class)->findAll()));
             $manager->persist($marche);
         }
     }
 
-    /**
-     * @param Generator $faker
-     * @param ObjectManager $manager
-     * @return void
-     */
-    public function createProducteurs(Generator $faker, ObjectManager $manager): void
-    {
-        for ($i = 0; $i < 10; $i++) {
-            $producteur = new Producteur();
-            $producteur->setPrenom($faker->firstName);
-            $producteur->setNom($faker->lastName);
-            $producteur->setEmail($faker->email);
-            $producteur->setTel($faker->phoneNumber);
-            $producteur->setAdresse($faker->address);
-            $producteur->setDescription($faker->text);
-            $producteur->addMarche($faker->randomElement($manager->getRepository(Marche::class)->findAll()));
-            $producteur->addProduit($faker->randomElement($manager->getRepository(Produit::class)->findAll()));
-            $producteur->addProduit($faker->randomElement($manager->getRepository(Produit::class)->findAll()));
-            $producteur->addProduit($faker->randomElement($manager->getRepository(Produit::class)->findAll()));
-
-            $manager->persist($producteur);
-        }
-    }
 
     /**
      * @param Generator $faker
@@ -113,8 +114,21 @@ class AppFixtures extends Fixture
         for ($i = 0; $i < 10; $i++) {
             $produit = new Produit();
             $produit->setNom($faker->word);
-            $produit->setPrix($faker->randomFloat(2, 0, 100));
             $manager->persist($produit);
+        }
+    }
+
+    public function createPrixProduit(Generator $faker, ObjectManager $manager): void
+    {
+        for ($i = 0; $i < 5; $i++) {
+            $prixProduit = new PrixProduits();
+            $produit = $faker->randomElement($manager->getRepository(Produit::class)->findAll());
+            $producteur = $faker->randomElement($manager->getRepository(Producteur::class)->findAll());
+
+            $prixProduit->setProduit($produit);
+            $prixProduit->setProducteur($producteur);
+            $prixProduit->setPrix($faker->randomDigitNotZero());
+            $manager->persist($prixProduit);
         }
     }
 }

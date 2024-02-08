@@ -2,16 +2,15 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Metadata\ApiResource;
-use App\Repository\UserRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use ORM\DiscriminatorColumn;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Serializer\Annotation\Groups;
+use App\Repository\UserRepository;
+use ApiPlatform\Metadata\ApiResource;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-#[ORM\Table(name: '`user`')]
 #[ApiResource(normalizationContext: ['groups' => ['read']], denormalizationContext: ['groups' => ['write']])]
 class User
 {
@@ -63,8 +62,8 @@ class User
         exactMessage: 'Le numéro de téléphone doit faire exactement {{ limit }} chiffres.'
     )]
     #[Assert\Regex(
-        pattern: '/^0[0-9]{9}$/',
-        message: 'Le numéro de téléphone doit commencer par 0 suivi de 9 chiffres.'
+        pattern: '/^(0|\+33|00)[1-9][0-9]{8}$/',
+        message: 'Le numéro de téléphone doit commencer par 0, +33, ou 00 suivi de 9 chiffres.'
     )]
     private ?string $tel = null;
 
@@ -81,15 +80,35 @@ class User
     private ?string $adresse = null;
 
     #[ORM\ManyToMany(targetEntity: Marche::class, mappedBy: 'clientsInscrits')]
-    private Collection $marches_inscrits;
+    private Collection $marchesInscrits;
 
     #[ORM\ManyToMany(targetEntity: Marche::class)]
     private Collection $marchesFavoris;
 
+    #[ORM\OneToMany(targetEntity: Marche::class, mappedBy: 'proprietaire')]
+    private Collection $marchesProprietaire;
+
+    #[ORM\OneToMany(mappedBy: 'redacteur', targetEntity: CommentaireMarche::class)]
+    private Collection $commentaireMarches;
+
+    #[ORM\OneToMany(mappedBy: 'redacteur', targetEntity: CommentaireProducteur::class)]
+    private Collection $commentaireProducteurs;
+
+    #[ORM\Column]
+    private ?bool $isBanned = null;
+
     public function __construct()
     {
-        $this->marcheProprietaires = new ArrayCollection();
+        $this->marchesInscrits = new ArrayCollection();
         $this->marchesFavoris = new ArrayCollection();
+        $this->marchesProprietaire = new ArrayCollection();
+        $this->commentaireMarches = new ArrayCollection();
+        $this->commentaireProducteurs = new ArrayCollection();
+    }
+
+    public function __toString(): string
+    {
+        return strtoupper($this->nom)." ".$this->prenom; // Modifier en fonction de votre logique
     }
 
     public function getId(): ?int
@@ -162,22 +181,22 @@ class User
      */
     public function getMarcheInscrits(): Collection
     {
-        return $this->marches_inscrits;
+        return $this->marchesInscrits;
     }
 
     public function addMarche(Marche $march): static
     {
-        if (!$this->marches_inscrits->contains($march)) {
-            $this->marches_inscrits->add($march);
+        if (!$this->marchesInscrits->contains($march)) {
+            $this->marchesInscrits->add($march);
             $march->addClientsInscrit($this);
         }
 
         return $this;
     }
 
-    public function removeMarch(Marche $march): static
+    public function removeMarche(Marche $march): static
     {
-        if ($this->marches_inscrits->removeElement($march)) {
+        if ($this->marchesInscrits->removeElement($march)) {
             $march->removeClientsInscrit($this);
         }
 
@@ -204,6 +223,102 @@ class User
     public function removeMarchesFavori(Marche $marchesFavori): static
     {
         $this->marchesFavoris->removeElement($marchesFavori);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Marche>
+     */
+    public function getMarchesProprietaire(): Collection
+    {
+        return $this->marchesProprietaire;
+    }
+
+    public function addMarchesProprietaire(Marche $marchesProprietaire): static
+    {
+        if (!$this->marchesProprietaire->contains($marchesProprietaire)) {
+            $this->marchesProprietaire->add($marchesProprietaire);
+        }
+
+        return $this;
+    }
+
+    public function removeMarchesProprietaire(Marche $marchesProprietaire): static
+    {
+        $this->marchesProprietaire->removeElement($marchesProprietaire);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, CommentaireMarche>
+     */
+    public function getCommentaireMarches(): Collection
+    {
+        return $this->commentaireMarches;
+    }
+
+    public function addCommentaireMarch(CommentaireMarche $commentaireMarch): static
+    {
+        if (!$this->commentaireMarches->contains($commentaireMarch)) {
+            $this->commentaireMarches->add($commentaireMarch);
+            $commentaireMarch->setRedacteur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCommentaireMarch(CommentaireMarche $commentaireMarch): static
+    {
+        if ($this->commentaireMarches->removeElement($commentaireMarch)) {
+            // set the owning side to null (unless already changed)
+            if ($commentaireMarch->getRedacteur() === $this) {
+                $commentaireMarch->setRedacteur(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, CommentaireProducteur>
+     */
+    public function getCommentaireProducteurs(): Collection
+    {
+        return $this->commentaireProducteurs;
+    }
+
+    public function addCommentaireProducteur(CommentaireProducteur $commentaireProducteur): static
+    {
+        if (!$this->commentaireProducteurs->contains($commentaireProducteur)) {
+            $this->commentaireProducteurs->add($commentaireProducteur);
+            $commentaireProducteur->setRedacteur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCommentaireProducteur(CommentaireProducteur $commentaireProducteur): static
+    {
+        if ($this->commentaireProducteurs->removeElement($commentaireProducteur)) {
+            // set the owning side to null (unless already changed)
+            if ($commentaireProducteur->getRedacteur() === $this) {
+                $commentaireProducteur->setRedacteur(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function isIsBanned(): ?bool
+    {
+        return $this->isBanned;
+    }
+
+    public function setIsBanned(bool $isBanned): static
+    {
+        $this->isBanned = $isBanned;
 
         return $this;
     }

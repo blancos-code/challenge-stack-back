@@ -21,6 +21,18 @@ class MarcheRepository extends ServiceEntityRepository
         parent::__construct($registry, Marche::class);
     }
 
+    public function getMoyenneNotesForAllMarches(): array
+    {
+        $result = $this->createQueryBuilder('m')
+            ->select('m.id', 'm.nom', 'AVG(c.note) as moyenne_notes')
+            ->leftJoin('m.commentaires', 'c')
+            ->groupBy('m.id, m.nom')
+            ->getQuery()
+            ->getResult();
+
+        return $result;
+    }
+
 //    /**
 //     * @return Marche[] Returns an array of Marche objects
 //     */

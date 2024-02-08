@@ -12,8 +12,14 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ProducteurRepository::class)]
 #[ApiResource(normalizationContext: ['groups' => ['read']], denormalizationContext: ['groups' => ['write']])]
-class Producteur extends User
+class Producteur
 {
+
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
+    private ?int $id = null;
+
     #[ORM\Column(type: Types::TEXT)]
     #[Assert\Length(
         min: 10,
@@ -21,21 +27,38 @@ class Producteur extends User
         minMessage: 'La description du producteur doit faire au moins {{ limit }} caractères.',
         maxMessage: 'La description du producteur doit faire moins de {{ limit }} caractères.'
     )]
-    #[Assert\NotBlank(
-        message: 'La description du producteur ne peut pas être vide'
-    )]
     private ?string $description = null;
-
-    #[ORM\OneToMany(mappedBy: 'producteur', targetEntity: Produit::class)]
-    private Collection $produits;
 
     #[ORM\ManyToMany(targetEntity: Marche::class, mappedBy: 'producteurs')]
     private Collection $marchesProducteurs;
 
+    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    private ?User $utilisateur = null;
+
+    #[ORM\Column]
+    private ?float $note = 0;
+
+    #[ORM\OneToMany(mappedBy: 'producteur', targetEntity: PrixProduits::class, fetch:"EAGER", cascade: ['all', 'remove'])]
+    private Collection $prixProduits;
+
+    #[ORM\OneToMany(mappedBy: 'producteur', targetEntity: PrixProduits::class,cascade: ['all', 'remove','persist'])]
+    private Collection $prixProduit;
+
+    #[ORM\OneToMany(mappedBy: 'producteur', targetEntity: CommentaireProducteur::class)]
+    private Collection $commentaireProducteurs;
+
+    public function __toString(): string
+    {
+        return $this->utilisateur->getNom()." ".$this->utilisateur->getPrenom();
+    }
+
     public function __construct()
     {
-        $this->produits = new ArrayCollection();
+        // parent::__construct();
         $this->marchesProducteurs = new ArrayCollection();
+        $this->prixProduits = new ArrayCollection();
+        $this->prixProduit = new ArrayCollection();
+        $this->commentaireProducteurs = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -51,36 +74,6 @@ class Producteur extends User
     public function setDescription(string $description): static
     {
         $this->description = $description;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Produit>
-     */
-    public function getProduits(): Collection
-    {
-        return $this->produits;
-    }
-
-    public function addProduit(Produit $produit): static
-    {
-        if (!$this->produits->contains($produit)) {
-            $this->produits->add($produit);
-            $produit->setProducteur($this);
-        }
-
-        return $this;
-    }
-
-    public function removeProduit(Produit $produit): static
-    {
-        if ($this->produits->removeElement($produit)) {
-            // set the owning side to null (unless already changed)
-            if ($produit->getProducteur() === $this) {
-                $produit->setProducteur(null);
-            }
-        }
 
         return $this;
     }
@@ -103,10 +96,120 @@ class Producteur extends User
         return $this;
     }
 
-    public function removeMarch(Marche $march): static
+    public function removeMarche(Marche $march): static
     {
         if ($this->marchesProducteurs->removeElement($march)) {
             $march->removeProducteur($this);
+        }
+
+        return $this;
+    }
+
+    public function getUtilisateur(): ?User
+    {
+        return $this->utilisateur;
+    }
+
+    public function setUtilisateur(?User $utilisateur): static
+    {
+        $this->utilisateur = $utilisateur;
+
+        return $this;
+    }
+
+    public function getNote(): ?float
+    {
+        return $this->note;
+    }
+
+    public function setNote(float $note): static
+    {
+        $this->note = $note;
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, PrixProduits>
+     */
+    public function getPrixProduits(): Collection
+    {
+        return $this->prixProduits;
+    }
+
+    public function addPrixProduits(PrixProduits $prix): static
+    {
+        if (!$this->prixProduits->contains($prix)) {
+            $this->prixProduits->add($prix);
+            // $march->addProducteur($this);
+        }
+
+        return $this;
+    }
+
+    public function removePrixProduits(PrixProduits $prix): static
+    {
+        if ($this->prixProduits->removeElement($prix)) {
+            // $march->removeProducteur($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, PrixProduits>
+     */
+    public function getPrixProduit(): Collection
+    {
+        return $this->prixProduit;
+    }
+
+    public function addPrixProduit(PrixProduits $prixProduit): static
+    {
+        if (!$this->prixProduit->contains($prixProduit)) {
+            $this->prixProduit->add($prixProduit);
+            $prixProduit->setProducteur($this);
+        }
+
+        return $this;
+    }
+
+    public function removePrixProduit(PrixProduits $prixProduit): static
+    {
+        if ($this->prixProduit->removeElement($prixProduit)) {
+            // set the owning side to null (unless already changed)
+            if ($prixProduit->getProducteur() === $this) {
+                $prixProduit->setProducteur(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, CommentaireProducteur>
+     */
+    public function getCommentaireProducteurs(): Collection
+    {
+        return $this->commentaireProducteurs;
+    }
+
+    public function addCommentaireProducteur(CommentaireProducteur $commentaireProducteur): static
+    {
+        if (!$this->commentaireProducteurs->contains($commentaireProducteur)) {
+            $this->commentaireProducteurs->add($commentaireProducteur);
+            $commentaireProducteur->setProducteur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCommentaireProducteur(CommentaireProducteur $commentaireProducteur): static
+    {
+        if ($this->commentaireProducteurs->removeElement($commentaireProducteur)) {
+            // set the owning side to null (unless already changed)
+            if ($commentaireProducteur->getProducteur() === $this) {
+                $commentaireProducteur->setProducteur(null);
+            }
         }
 
         return $this;
