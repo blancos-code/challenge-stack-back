@@ -19,6 +19,7 @@ class Marche
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(["read"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
@@ -61,6 +62,7 @@ class Marche
     private ?User $proprietaire = null;
 
     #[ORM\ManyToOne(inversedBy: 'marches')]
+    #[Groups(["read", "write"])]
     private ?Categorie $categorie = null;
 
     #[ORM\Column(length: 255)]

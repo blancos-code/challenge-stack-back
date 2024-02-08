@@ -48,6 +48,7 @@ class AppFixtures extends Fixture
             $user->setEmail($faker->email);
             $user->setTel($faker->phoneNumber);
             $user->setAdresse($faker->address);
+            $user->setIsBanned(false);
             $manager->persist($user);
         }
     }
@@ -98,7 +99,7 @@ class AppFixtures extends Fixture
             $marche->setAdresse($faker->address);
             $marche->setDateDebut(new DateTimeImmutable($faker->dateTime->format('Y-m-d H:i:s')));
             $marche->setDateFin(new DateTimeImmutable($faker->dateTime->format('Y-m-d H:i:s')));
-            $marche->setProprietaire($faker->randomElement($manager->getRepository(Producteur::class)->findAll()));
+            $marche->setProprietaire($faker->randomElement($manager->getRepository(User::class)->findAll()));
             $marche->setCategorie($faker->randomElement($manager->getRepository(Categorie::class)->findAll()));
             $manager->persist($marche);
         }

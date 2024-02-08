@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ProducteurRepository::class)]
@@ -18,6 +19,7 @@ class Producteur
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(["read", "write"])]
     private ?int $id = null;
 
     #[ORM\Column(type: Types::TEXT)]
@@ -27,15 +29,18 @@ class Producteur
         minMessage: 'La description du producteur doit faire au moins {{ limit }} caractères.',
         maxMessage: 'La description du producteur doit faire moins de {{ limit }} caractères.'
     )]
+    #[Groups(["read", "write"])]
     private ?string $description = null;
 
     #[ORM\ManyToMany(targetEntity: Marche::class, mappedBy: 'producteurs')]
     private Collection $marchesProducteurs;
 
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    #[Groups(["read", "write"])]
     private ?User $utilisateur = null;
 
     #[ORM\Column]
+    #[Groups(["read", "write"])]
     private ?float $note = 0;
 
     #[ORM\OneToMany(mappedBy: 'producteur', targetEntity: PrixProduits::class, fetch:"EAGER", cascade: ['all', 'remove'])]

@@ -8,6 +8,7 @@ use App\Repository\UserRepository;
 use ApiPlatform\Metadata\ApiResource;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
@@ -29,6 +30,7 @@ class User
     #[Assert\NotBlank(
         message: 'Le nom ne peut pas être vide'
     )]
+    #[Groups(["read", "write"])]
     private ?string $nom = null;
 
     #[ORM\Column(length: 255)]
@@ -41,6 +43,7 @@ class User
     #[Assert\NotBlank(
         message: 'Le prénom ne peut pas être vide'
     )]
+    #[Groups(["read", "write"])]
     private ?string $prenom = null;
 
     #[ORM\Column(length: 255)]
@@ -53,7 +56,7 @@ class User
     #[Assert\NotBlank(
         message: 'L\'email ne peut pas être vide'
     )]
-
+    #[Groups(["read", "write"])]
     private ?string $email = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -65,6 +68,7 @@ class User
         pattern: '/^(0|\+33|00)[1-9][0-9]{8}$/',
         message: 'Le numéro de téléphone doit commencer par 0, +33, ou 00 suivi de 9 chiffres.'
     )]
+    #[Groups(["read", "write"])]
     private ?string $tel = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -77,6 +81,7 @@ class User
     #[Assert\NotBlank(
         message: 'L\'adresse ne peut pas être vide'
     )]
+    #[Groups(["read", "write"])]
     private ?string $adresse = null;
 
     #[ORM\ManyToMany(targetEntity: Marche::class, mappedBy: 'clientsInscrits')]
