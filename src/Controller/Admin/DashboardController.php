@@ -9,7 +9,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 use App\Controller\Admin\CommentaireMarcheCrudController;
-use App\Entity\CommentaireProducteur;
 
 class DashboardController extends AbstractDashboardController
 {
@@ -28,7 +27,7 @@ class DashboardController extends AbstractDashboardController
         
         return parent::index();
 
-        // return $this->render('some/path/my-dashboard.html.twig');
+        return $this->render('base.html.twig');
     }
 
     public function configureDashboard(): Dashboard

@@ -23,7 +23,7 @@ class UserCrudController extends AbstractCrudController
     {
         return [
             IdField::new('id')->hideOnForm(),
-            BooleanField::new('isbanned')->setLabel('Bannir')->setRequired(true),
+            BooleanField::new('isbanned')->setLabel('Banni')->setRequired(true),
             TextField::new('nom')->setLabel('Nom')->setRequired(true),
             TextField::new('prenom')->setLabel('Prénom')->setRequired(true),
             TextField::new('email')->setLabel('Email')->setRequired(true),
