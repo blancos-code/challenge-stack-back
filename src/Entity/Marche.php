@@ -10,6 +10,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 #[ORM\Entity(repositoryClass: MarcheRepository::class)]
 #[ApiResource(normalizationContext: ['groups' => ['read']], denormalizationContext: ['groups' => ['write']])]
@@ -57,7 +58,7 @@ class Marche
 
     #[ORM\ManyToOne(inversedBy: 'marchesProprietaire')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Producteur $proprietaire = null;
+    private ?User $proprietaire = null;
 
     #[ORM\ManyToOne(inversedBy: 'marches')]
     private ?Categorie $categorie = null;
@@ -75,25 +76,21 @@ class Marche
     #[Groups(["read", "write"])]
     private ?string $nom = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $description = null;
-
-    #[ORM\Column]
-    private ?float $note = 0;
-
-    #[ORM\OneToMany(mappedBy: 'marche', targetEntity: CommentaireMarche::class)]
-    private Collection $commentaireMarches;
+    #[Assert\Callback]
+    public function validate(ExecutionContextInterface $context)
+    {
+        // Mettez votre logique de validation ici
+        if ($this->dateDebut > $this->dateFin) {
+            $context->buildViolation('Dates invalides')
+                ->atPath('dateFin')
+                ->addViolation();
+        }
+    }
 
     public function __construct()
     {
         $this->producteurs = new ArrayCollection();
         $this->clientsInscrits = new ArrayCollection();
-        $this->commentaireMarches = new ArrayCollection();
-    }
-
-    public function __toString(): string
-    {
-        return $this->nom; // Modifier en fonction de votre logique
     }
 
     public function getId(): ?int
@@ -185,12 +182,12 @@ class Marche
         return $this;
     }
 
-    public function getProprietaire(): ?Producteur
+    public function getProprietaire(): ?User
     {
         return $this->proprietaire;
     }
 
-    public function setProprietaire(?Producteur $proprietaire): static
+    public function setProprietaire(?User $proprietaire): static
     {
         $this->proprietaire = $proprietaire;
 
@@ -219,68 +216,5 @@ class Marche
         $this->nom = $nom;
 
         return $this;
-    }
-
-    public function getDescription(): ?string
-    {
-        return $this->description;
-    }
-
-    public function setDescription(?string $description): static
-    {
-        $this->description = $description;
-
-        return $this;
-    }
-
-    public function getNote(): ?float
-    {
-        return $this->note;
-    }
-
-    public function setNote(float $note): static
-    {
-        $this->note = $note;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, CommentaireMarche>
-     */
-    public function getCommentaireMarches(): Collection
-    {
-        return $this->commentaireMarches;
-    }
-
-    public function addCommentaireMarch(CommentaireMarche $commentaireMarch): static
-    {
-        if (!$this->commentaireMarches->contains($commentaireMarch)) {
-            $this->commentaireMarches->add($commentaireMarch);
-            $commentaireMarch->setMarche($this);
-        }
-
-        return $this;
-    }
-
-    public function removeCommentaireMarch(CommentaireMarche $commentaireMarch): static
-    {
-        if ($this->commentaireMarches->removeElement($commentaireMarch)) {
-            // set the owning side to null (unless already changed)
-            if ($commentaireMarch->getMarche() === $this) {
-                $commentaireMarch->setMarche(null);
-            }
-        }
-
-        return $this;
-    }
-
-    public function getMoyenneNotes(): ?float
-    {
-        $notes = $this->commentaireMarches->map(function (CommentaireMarche $commentaire) {
-            return $commentaire->getNote();
-        });
-
-        return $notes->count() > 0 ? $notes->sum() / $notes->count() : null;
     }
 }
