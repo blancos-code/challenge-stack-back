@@ -29,11 +29,11 @@ class CommentaireMarche
     #[Groups(["read", "write"])]
     private ?string $contenu = null;
 
-    #[ORM\ManyToOne(inversedBy: 'commentaireMarches')]
+    #[ORM\ManyToOne(inversedBy: 'commentaireMarches',cascade: ["persist"])]
     #[Groups(["read", "write"])]
     private ?Marche $marche = null;
 
-    #[ORM\ManyToOne(inversedBy: 'commentaireMarches')]
+    #[ORM\ManyToOne(inversedBy: 'commentaireMarches',cascade: ["persist"])]
     #[Groups(["read", "write"])]
     private ?User $redacteur = null;
 
