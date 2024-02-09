@@ -54,8 +54,6 @@ class Producteur
     #[Groups(["read", "write"])]
     private Collection $prixProduit;
 
-    
-
     public function __toString(): string
     {
         return $this->utilisateur->getNom()." ".$this->utilisateur->getPrenom();
@@ -208,7 +206,7 @@ class Producteur
             $this->commentaireProducteurs->add($commentaireProducteur);
             $commentaireProducteur->setProducteur($this);
         }
-
+        $this->calculerMoyenneDesNotes();
         return $this;
     }
 
@@ -233,10 +231,8 @@ class Producteur
             foreach ($this->commentaireProducteurs as $commentaireProducteur) {
                 $totalNotes += $commentaireProducteur->getNote();
             }
-
             $this->note = $totalNotes / $nombreDeCommentaires;
         }
-
         return $this->note;
     }
 }

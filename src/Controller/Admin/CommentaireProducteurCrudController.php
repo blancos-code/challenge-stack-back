@@ -26,8 +26,9 @@ class CommentaireProducteurCrudController extends AbstractCrudController
                 ->setLabel('Producteur')
                 ->setRequired(true),
             yield AssociationField::new('redacteur')
-            ->setLabel('Utilisateur')
-            ->setRequired(true),
+                ->setLabel('Utilisateur')
+                ->setRequired(true),
         ];
     }
+    
 }

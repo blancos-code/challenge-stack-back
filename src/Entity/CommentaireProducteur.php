@@ -5,28 +5,36 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\CommentaireProducteurRepository;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: CommentaireProducteurRepository::class)]
+#[ApiResource(normalizationContext: ['groups' => ['read']], denormalizationContext: ['groups' => ['write']])]
 class CommentaireProducteur
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(["read", "write"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["read", "write"])]
     private ?string $titre = null;
 
     #[ORM\Column]
+    #[Groups(["read", "write"])]
     private ?int $note = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["read", "write"])]
     private ?string $contenu = null;
 
     #[ORM\ManyToOne(inversedBy: 'commentaireProducteurs')]
+    #[Groups(["read", "write"])]
     private ?Producteur $producteur = null;
 
     #[ORM\ManyToOne(inversedBy: 'commentaireProducteurs')]
+    #[Groups(["read", "write"])]
     private ?User $redacteur = null;
 
     public function __toString(): string
@@ -70,6 +78,7 @@ class CommentaireProducteur
 
     public function setContenu(string $contenu): static
     {
+        dd('test');
         $this->contenu = $contenu;
 
         return $this;

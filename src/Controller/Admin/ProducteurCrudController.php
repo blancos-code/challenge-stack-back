@@ -50,8 +50,8 @@ class ProducteurCrudController extends AbstractCrudController
                     ],
                 ]),
             AssociationField::new('commentaireProducteurs')
-            ->setLabel('Commentaires')
-            ->setRequired(false),
+                ->setLabel('Commentaires')
+                ->setRequired(false),
         ];
     }
     
