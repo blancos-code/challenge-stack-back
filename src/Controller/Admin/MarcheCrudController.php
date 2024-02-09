@@ -13,6 +13,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 
 class MarcheCrudController extends AbstractCrudController
 {
@@ -32,6 +33,9 @@ class MarcheCrudController extends AbstractCrudController
             yield AssociationField::new('proprietaire')
             ->setLabel('Propriétaire')
             ->setRequired(true),
+            yield AssociationField::new('producteurs')
+            ->setLabel('Producteurs')
+            ->setRequired(false),
             yield AssociationField::new('categorie')
             ->setLabel('Catégorie')
             ->setRequired(true),
