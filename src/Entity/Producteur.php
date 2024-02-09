@@ -42,7 +42,7 @@ class Producteur
     #[Groups(["read", "write"])]
     private ?float $note = 0;
 
-    #[ORM\OneToMany(mappedBy: 'producteur', targetEntity: CommentaireProducteur::class)]
+    #[ORM\OneToMany(mappedBy: 'producteur', targetEntity: CommentaireProducteur::class,cascade: ['all', 'remove'])]
     #[Groups(["read", "write"])]
     private Collection $commentaireProducteurs;
 
