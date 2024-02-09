@@ -78,7 +78,6 @@ class CommentaireProducteur
 
     public function setContenu(string $contenu): static
     {
-        dd('test');
         $this->contenu = $contenu;
 
         return $this;
@@ -92,6 +91,8 @@ class CommentaireProducteur
     public function setProducteur(?Producteur $producteur): static
     {
         $this->producteur = $producteur;
+
+        $producteur->calculerMoyenneDesNotes();
 
         return $this;
     }

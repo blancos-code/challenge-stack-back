@@ -287,7 +287,7 @@ class User
             $this->commentaireMarches->add($commentaireMarch);
             $commentaireMarch->setRedacteur($this);
         }
-
+        
         return $this;
     }
 
