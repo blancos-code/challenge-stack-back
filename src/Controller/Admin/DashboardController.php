@@ -18,7 +18,7 @@ class DashboardController extends AbstractDashboardController
         $adminUrlGenerator = $this->container->get(AdminUrlGenerator::class);
 
         // Option 1. Make your dashboard redirect to the same page for all users
-        return $this->redirect($adminUrlGenerator->setController(CategorieCrudController::class)->generateUrl());
+        return $this->redirect($adminUrlGenerator->setController(MarcheCrudController::class)->generateUrl());
 
         // Option 2. Make your dashboard redirect to different pages depending on the user
         /*if ('estelle' === $this->getUser()->getUsername()) {
