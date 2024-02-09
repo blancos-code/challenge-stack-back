@@ -50,13 +50,16 @@ class Marche
     private ?\DateTimeImmutable $dateFin = null;
 
     #[ORM\ManyToMany(targetEntity: Producteur::class, inversedBy: 'marchesProducteurs')]
+    #[Groups(["read", "write"])]
     private Collection $producteurs;
 
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'marchesInscrits')]
+    #[Groups(["read", "write"])]
     private Collection $clientsInscrits;
 
     #[ORM\ManyToOne(inversedBy: 'marchesProprietaire')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(["read", "write"])]
     private ?User $proprietaire = null;
 
     #[ORM\ManyToOne(inversedBy: 'marches')]
@@ -92,6 +95,7 @@ class Marche
     }
 
     #[ORM\OneToMany(mappedBy: 'marche', targetEntity: CommentaireMarche::class)]
+    #[Groups(["read", "write"])]
     private Collection $commentaireMarches;
 
     public function __toString(): string
