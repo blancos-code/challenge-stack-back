@@ -110,7 +110,6 @@ class User
     #[ORM\Column(length: 255,nullable: true)]
     private ?string $imageName = null;
 
-    #[ORM\Column(nullable: true)]
     #[Vich\UploadableField(mapping: 'user_image', fileNameProperty: 'imageName')]
     private ?File $imageFile = null;
     
