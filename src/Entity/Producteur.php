@@ -15,7 +15,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ApiResource(normalizationContext: ['groups' => ['read']], denormalizationContext: ['groups' => ['write']])]
 class Producteur
 {
-
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -43,14 +42,19 @@ class Producteur
     #[Groups(["read", "write"])]
     private ?float $note = 0;
 
+    #[ORM\OneToMany(mappedBy: 'producteur', targetEntity: CommentaireProducteur::class)]
+    #[Groups(["read", "write"])]
+    private Collection $commentaireProducteurs;
+
     #[ORM\OneToMany(mappedBy: 'producteur', targetEntity: PrixProduits::class, fetch:"EAGER", cascade: ['all', 'remove'])]
+    #[Groups(["read", "write"])]
     private Collection $prixProduits;
 
     #[ORM\OneToMany(mappedBy: 'producteur', targetEntity: PrixProduits::class,cascade: ['all', 'remove','persist'])]
+    #[Groups(["read", "write"])]
     private Collection $prixProduit;
 
-    #[ORM\OneToMany(mappedBy: 'producteur', targetEntity: CommentaireProducteur::class)]
-    private Collection $commentaireProducteurs;
+    
 
     public function __toString(): string
     {
@@ -218,5 +222,21 @@ class Producteur
         }
 
         return $this;
+    }
+
+    public function calculerMoyenneDesNotes(): float
+    {
+        $totalNotes = 0;
+        $nombreDeCommentaires = count($this->commentaireProducteurs);
+
+        if ($nombreDeCommentaires > 0) {
+            foreach ($this->commentaireProducteurs as $commentaireProducteur) {
+                $totalNotes += $commentaireProducteur->getNote();
+            }
+
+            $this->note = $totalNotes / $nombreDeCommentaires;
+        }
+
+        return $this->note;
     }
 }

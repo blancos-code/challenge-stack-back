@@ -37,7 +37,7 @@ class UserCrudController extends AbstractCrudController
             yield TextField::new('tel')->setLabel('Téléphone')->setRequired(false),
             yield TextField::new('adresse')->setLabel('Adresse')->setRequired(true),
             yield Field::new('imageFile', 'Image')
-            ->setFormType(VichImageType::class),
+                ->setFormType(VichImageType::class),
             yield AssociationField::new('commentaireMarches')
                 ->setLabel('Commentaires (marchés)')
                 ->setRequired(false)

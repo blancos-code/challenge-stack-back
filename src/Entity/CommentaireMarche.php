@@ -2,8 +2,9 @@
 
 namespace App\Entity;
 
-use App\Repository\CommentaireMarcheRepository;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Metadata\ApiResource;
+use App\Repository\CommentaireMarcheRepository;
 
 #[ORM\Entity(repositoryClass: CommentaireMarcheRepository::class)]
 class CommentaireMarche
