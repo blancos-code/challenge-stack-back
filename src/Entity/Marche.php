@@ -76,6 +76,10 @@ class Marche
     #[Groups(["read", "write"])]
     private ?string $nom = null;
 
+    #[ORM\Column]
+    #[Groups(["read", "write"])]
+    private ?float $note = 0;
+
     #[Assert\Callback]
     public function validate(ExecutionContextInterface $context)
     {
@@ -89,6 +93,12 @@ class Marche
 
     #[ORM\OneToMany(mappedBy: 'marche', targetEntity: CommentaireMarche::class)]
     private Collection $commentaireMarches;
+
+    public function __toString(): string
+    {
+        return $this->getNom();
+    }
+
 
     /**
      * @return Collection
@@ -151,6 +161,17 @@ class Marche
     {
         $this->dateFin = $dateFin;
 
+        return $this;
+    }
+
+    public function getNote(): ?float
+    {
+        return $this->note;
+    }
+
+    public function setNote(float $note): static
+    {
+        $this->note = $note;
         return $this;
     }
 
@@ -236,5 +257,19 @@ class Marche
         $this->nom = $nom;
 
         return $this;
+    }
+
+    public function calculerMoyenneDesNotes(): float
+    {
+        $totalNotes = 0;
+        $nombreDeCommentaires = count($this->commentaireMarches);
+
+        if ($nombreDeCommentaires > 0) {
+            foreach ($this->commentaireMarches as $commentaireMarche) {
+                $totalNotes += $commentaireMarche->getNote();
+            }
+            $this->note = $totalNotes / $nombreDeCommentaires;
+        }
+        return $this->note;
     }
 }

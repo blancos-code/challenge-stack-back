@@ -5,28 +5,36 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\CommentaireMarcheRepository;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: CommentaireMarcheRepository::class)]
+#[ApiResource(normalizationContext: ['groups' => ['read']], denormalizationContext: ['groups' => ['write']])]
 class CommentaireMarche
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(["read", "write"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["read", "write"])]
     private ?string $titre = null;
 
     #[ORM\Column]
+    #[Groups(["read", "write"])]
     private ?int $note = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["read", "write"])]
     private ?string $contenu = null;
 
     #[ORM\ManyToOne(inversedBy: 'commentaireMarches')]
+    #[Groups(["read", "write"])]
     private ?Marche $marche = null;
 
     #[ORM\ManyToOne(inversedBy: 'commentaireMarches')]
+    #[Groups(["read", "write"])]
     private ?User $redacteur = null;
 
     public function __toString(): string
@@ -83,6 +91,8 @@ class CommentaireMarche
     public function setMarche(?Marche $marche): static
     {
         $this->marche = $marche;
+
+        $marche->calculerMoyenneDesNotes();
 
         return $this;
     }
