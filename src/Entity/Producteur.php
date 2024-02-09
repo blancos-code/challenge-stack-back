@@ -206,7 +206,7 @@ class Producteur
             $this->commentaireProducteurs->add($commentaireProducteur);
             $commentaireProducteur->setProducteur($this);
         }
-        $this->calculerMoyenneDesNotes();
+
         return $this;
     }
 
