@@ -30,7 +30,7 @@ class Produit
     )]
     private ?string $nom = null;
 
-    #[ORM\OneToMany(mappedBy: 'produit', targetEntity: PrixProduits::class)]
+    #[ORM\OneToMany(mappedBy: 'produit', targetEntity: PrixProduits::class,cascade: ['all', 'remove'])]
     private Collection $prixProduits;
 
     public function __toString(): string

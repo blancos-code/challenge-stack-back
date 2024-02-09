@@ -116,7 +116,6 @@ class User
     #[Groups(["read", "write"])]
     private ?File $imageFile = null;
     
-
     #[ORM\Column(type: 'datetime_immutable',nullable: true)]
     #[Gedmo\Timestampable(on: 'update')]
     private $updatedAt;
