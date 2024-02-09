@@ -105,12 +105,15 @@ class User
     private Collection $commentaireProducteurs;
 
     #[ORM\Column]
+    #[Groups(["read", "write"])]
     private ?bool $isBanned = null;
     
     #[ORM\Column(length: 255,nullable: true)]
+    #[Groups(["read", "write"])]
     private ?string $imageName = null;
 
     #[Vich\UploadableField(mapping: 'user_image', fileNameProperty: 'imageName')]
+    #[Groups(["read", "write"])]
     private ?File $imageFile = null;
     
 

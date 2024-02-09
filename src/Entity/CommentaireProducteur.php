@@ -29,11 +29,11 @@ class CommentaireProducteur
     #[Groups(["read", "write"])]
     private ?string $contenu = null;
 
-    #[ORM\ManyToOne(inversedBy: 'commentaireProducteurs')]
+    #[ORM\ManyToOne(inversedBy: 'commentaireProducteurs',cascade: ["persist"])]
     #[Groups(["read", "write"])]
     private ?Producteur $producteur = null;
 
-    #[ORM\ManyToOne(inversedBy: 'commentaireProducteurs')]
+    #[ORM\ManyToOne(inversedBy: 'commentaireProducteurs',cascade: ["persist"])]
     #[Groups(["read", "write"])]
     private ?User $redacteur = null;
 
