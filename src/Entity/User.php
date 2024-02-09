@@ -12,12 +12,14 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use Symfony\Component\Validator\Constraints as Assert;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 #[Vich\Uploadable]
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ApiResource(normalizationContext: ['groups' => ['read']], denormalizationContext: ['groups' => ['write']])]
 class User
 {
+        
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -104,12 +106,18 @@ class User
 
     #[ORM\Column]
     private ?bool $isBanned = null;
+    
+    #[ORM\Column(length: 255,nullable: true)]
+    private ?string $imageName = null;
 
-    #[ORM\Column(type:"string", length:255)]
-    private $imageName = null;
+    #[ORM\Column(nullable: true)]
+    #[Vich\UploadableField(mapping: 'user_image', fileNameProperty: 'imageName')]
+    private ?File $imageFile = null;
+    
 
-    #[Vich\UploadableField(mapping:"User", fileNameProperty:"imageName")]
-    private $imageFile;
+    #[ORM\Column(type: 'datetime_immutable',nullable: true)]
+    #[Gedmo\Timestampable(on: 'update')]
+    private $updatedAt;
 
 
     public function __construct()
@@ -338,32 +346,39 @@ class User
         return $this;
     }
 
+    public function setImageFile(?File $imageFile = null): void
+    {
+      $this->imageFile = $imageFile;
+
+      if (null !== $imageFile) {
+            // Il faut biensur que la propriété updatedAt soit crée sur l'Entity.
+            $this->updatedAt = new \DateTimeImmutable();
+        }
+
+    }
+
+    public function getImageFile(): ?File
+    {
+      return $this->imageFile;
+    }
+
+    public function setImageName(?string $imageName): void
+    { 
+        $this->imageName = $imageName;
+    }
     public function getImageName(): ?string
     {
         return $this->imageName;
     }
 
-    public function setImageName(?string $imageName): self
+    public function getUpdatedAt(): ?\DateTimeImmutable
     {
-        $this->imageName = $imageName;
-
+        return $this->updatedAt;
+    }
+    public function setUpdatedAt(\DateTimeImmutable $updatedAt): self
+    {
+        $this->updatedAt = $updatedAt;
         return $this;
     }
 
-    public function getImageFile(): ?File
-    {
-        return $this->imageFile;
-    }
-
-    public function setImageFile(?File $imageFile = null): self
-    {
-        $this->imageFile = $imageFile;
-
-        if ($imageFile !== null) {
-            // C'est important pour déclencher l'événement de téléchargement
-            // $this->updatedAt = new \DateTimeImmutable();
-        }
-
-        return $this;
-    }
 }

@@ -1,7 +1,10 @@
 vich_uploader:
     db_driver: orm
     mappings:
-        User:
-            uri_prefix:         /images/User
-            upload_destination: '%kernel.project_dir%/public/images/User'
-            namer: 'Vich\UploaderBundle\Naming\OrignameNamer'
+        user_image: 
+            uri_prefix: /uploads/user_images
+            upload_destination: '%kernel.project_dir%/public/uploads/user_images'
+            namer: Vich\UploaderBundle\Naming\UniqidNamer
+            inject_on_load: true
+            delete_on_update: true
+            delete_on_remove: true
